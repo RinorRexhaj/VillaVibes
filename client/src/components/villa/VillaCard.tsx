@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Villa } from "../../types/Villa";
 
 interface VillaCardProps {
@@ -7,7 +7,7 @@ interface VillaCardProps {
 }
 
 const VillaCard: React.FC<VillaCardProps> = ({ villa, onClick }) => {
-  const [currentImage, setCurrentImage] = useState(0);
+  // const [currentImage, setCurrentImage] = useState(0);
 
   return (
     <div
@@ -15,7 +15,7 @@ const VillaCard: React.FC<VillaCardProps> = ({ villa, onClick }) => {
       onClick={() => onClick(villa)}
     >
       <img
-        src="/src/assets/img/villa.jpg"
+        src="/assets/img/villa.jpg"
         alt=""
         className="w-full h-40 object-cover"
       />

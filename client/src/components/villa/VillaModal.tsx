@@ -13,12 +13,12 @@ const VillaModal: React.FC<VillaModalProps> = ({ villa, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 duration-300">
       <div
-        className={`relative bg-white rounded-3xl tb:rounded-lg shadow-lg w-10/12 h-2/3 tb:w-[500px] overflow-hidden border border-black ${
+        className={`relative bg-white rounded-3xl tb:rounded-lg shadow-lg h-2/3 w-[500px] max-w-[90vw] overflow-hidden border border-black ${
           villa ? "animate-fadeIn" : "animate-fadeOut -z-50"
         } [animation-fill-mode:backwards]`}
       >
         <img
-          src="/src/assets/img/villa.jpg"
+          src="/assets/img/villa.jpg"
           alt=""
           className="w-full h-1/2 object-cover"
         />

@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { faRobot, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import Message from "./Message";
+import UserInput from "./UserInput";
 
 const quickReplies = [
   "What are your villa prices?",
@@ -12,32 +14,53 @@ const quickReplies = [
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { text: "Hello! How can I help you?", sender: "bot" },
+    { text: "Hello! How can I help you?", sender: "bot", created: false },
   ]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isOpen]);
 
   const handleReply = (reply: string) => {
-    setMessages([...messages, { text: reply, sender: "user" }]);
+    const newMessages = [
+      ...messages,
+      { text: reply, sender: "user", created: true },
+    ];
+    setMessages(newMessages);
+    setTimeout(
+      () =>
+        setMessages([
+          ...newMessages,
+          { text: "wait", sender: "bot", created: true },
+        ]),
+      500
+    );
+    const newMsg = newMessages.filter((msg) => msg.text !== "wait");
+    setTimeout(() => setMessages([...newMsg]), 2900);
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { text: "I'll get back to you on that!", sender: "bot" },
+        { text: "I'll get back to you on that!", sender: "bot", created: true },
       ]);
-    }, 1000);
+    }, 3000);
   };
 
   return (
-    <div className="fixed bottom-6 right-6 flex flex-col items-end text-3xl tb:text-base ">
+    <div className="fixed bottom-6 right-6 flex flex-col items-end tb:text-base">
       {/* Floating Button */}
       <FontAwesomeIcon
         icon={faRobot}
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-primary text-white h-28 w-28 tb:h-10 tb:w-10 p-6 tb:p-3 rounded-full shadow-lg hover:bg-primary hover:bg-opacity-80 cursor-pointer transition duration-300"
+        className="bg-primary text-white h-10 w-10 p-3 rounded-full shadow-lg hover:bg-primary hover:bg-opacity-80 cursor-pointer transition duration-300"
       ></FontAwesomeIcon>
 
       {/* Chat Window */}
       {isOpen && (
         <div
-          className={`w-[600px] tb:w-80 bg-white shadow-xl rounded-lg p-8 tb:p-4 mt-3 border border-gray-300 ${
+          className={`w-96 max-w-[80vw] bg-white shadow-xl rounded-lg p-4 mt-3 border border-gray-300 ${
             isOpen ? "animate-fadeIn" : "animate-fadeOut"
           } [animation-fill-mode:backwards]`}
         >
@@ -52,19 +75,19 @@ const ChatBot = () => {
           </div>
 
           {/* Chat Messages */}
-          <div className="mt-3 max-h-60 overflow-y-auto space-y-2">
+          <div className="relative mt-3 h-40 max-h-60 overflow-y-auto space-y-2">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`p-2 rounded-lg max-w-[80%] ${
-                  msg.sender === "bot"
-                    ? "bg-gray-100 text-gray-800 self-start"
-                    : "bg-primary text-white self-end ml-auto"
-                }`}
-              >
-                {msg.text}
-              </div>
+              <Message
+                key={"message" + index}
+                index={index}
+                text={msg.text}
+                created={true}
+                sender={msg.sender}
+              />
             ))}
+
+            {/* Scroll to Bottom Ref */}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Quick Replies */}
@@ -79,6 +102,7 @@ const ChatBot = () => {
               </button>
             ))}
           </div>
+          <UserInput handleReply={handleReply} />
         </div>
       )}
     </div>

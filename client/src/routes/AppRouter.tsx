@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import Navbar from "../components/Navbar";
 import Reservations from "../pages/Reservations";
-import ChatBot from "../components/ChatBot";
+import ChatBot from "../components/chatbot/ChatBot";
 
 const AppRouter: React.FC = () => {
   return (
