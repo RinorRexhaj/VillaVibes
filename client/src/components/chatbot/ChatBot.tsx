@@ -3,20 +3,13 @@ import { faRobot, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Message from "./Message";
 import UserInput from "./UserInput";
-
-const quickReplies = [
-  "What are your villa prices?",
-  "Do you have availability next weekend?",
-  "What amenities do you offer?",
-  "How can I make a reservation?",
-];
+import { useChatStore } from "../../store/useChatStore";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { text: "Hello! How can I help you?", sender: "bot", created: false },
-  ]);
+  const { messages, replies, addUserMessage, addBotMessage } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -24,32 +17,27 @@ const ChatBot = () => {
     }
   }, [messages, isOpen]);
 
-  const handleReply = (reply: string) => {
-    const newMessages = [
-      ...messages,
-      { text: reply, sender: "user", created: true },
-    ];
-    setMessages(newMessages);
-    setTimeout(
-      () =>
-        setMessages([
-          ...newMessages,
-          { text: "wait", sender: "bot", created: true },
-        ]),
-      500
-    );
-    const newMsg = newMessages.filter((msg) => msg.text !== "wait");
-    setTimeout(() => setMessages([...newMsg]), 2900);
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { text: "I'll get back to you on that!", sender: "bot", created: true },
-      ]);
-    }, 3000);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        chatWindowRef.current &&
+        !chatWindowRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
+  const handleReply = (message: string) => {
+    addUserMessage(message);
+    setTimeout(() => addBotMessage(message), 300);
   };
 
   return (
-    <div className="fixed bottom-6 right-6 flex flex-col items-end tb:text-base">
+    <div className="fixed bottom-6 right-6 flex flex-col items-end tb:text-base z-50">
       {/* Floating Button */}
       <FontAwesomeIcon
         icon={faRobot}
@@ -60,7 +48,8 @@ const ChatBot = () => {
       {/* Chat Window */}
       {isOpen && (
         <div
-          className={`w-96 max-w-[80vw] bg-white shadow-xl rounded-lg p-4 mt-3 border border-gray-300 ${
+          ref={chatWindowRef}
+          className={`w-96 max-w-[80vw] bg-white shadow-xl z-50 rounded-lg p-4 mt-3 border border-gray-300 ${
             isOpen ? "animate-fadeIn" : "animate-fadeOut"
           } [animation-fill-mode:backwards]`}
         >
@@ -92,7 +81,7 @@ const ChatBot = () => {
 
           {/* Quick Replies */}
           <div className="mt-4 grid grid-cols-2 gap-2">
-            {quickReplies.map((reply, index) => (
+            {replies.map((reply, index) => (
               <button
                 key={index}
                 onClick={() => handleReply(reply)}

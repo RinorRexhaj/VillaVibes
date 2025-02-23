@@ -21,7 +21,7 @@ const UserInput: React.FC<UserInputProps> = ({ handleReply }) => {
       <input
         ref={inputRef}
         type="text"
-        className="flex-1 p-2 border rounded-lg text-base font-medium focus:outline-none"
+        className="flex-1 p-2 border rounded-lg text-base focus:outline-none"
         placeholder="Type a message..."
         value={userInput}
         onChange={(e) => setUserInput(e.target.value)}

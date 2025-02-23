@@ -5,4 +5,6 @@ services:
     build: .
     ports:
       - "8080:80"
+    env_file:
+      - .env
     container_name: villa_frontend

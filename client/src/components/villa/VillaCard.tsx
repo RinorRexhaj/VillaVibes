@@ -1,31 +1,35 @@
-// import { useState } from "react";
 import { Villa } from "../../types/Villa";
+import Carousel from "../../shared/Carousel";
 
 interface VillaCardProps {
   villa: Villa;
+  reserved: boolean;
   onClick: (villa: Villa) => void;
 }
 
-const VillaCard: React.FC<VillaCardProps> = ({ villa, onClick }) => {
-  // const [currentImage, setCurrentImage] = useState(0);
-
+const VillaCard: React.FC<VillaCardProps> = ({ villa, reserved, onClick }) => {
   return (
     <div
-      className="relative w-72 h-64 border rounded-md overflow-hidden shadow-sm hover:shadow-lg duration-150 cursor-pointer"
+      className="relative w-full h-72 border border-gray-200 rounded-md overflow-hidden shadow-md hover:shadow-xl duration-200 cursor-pointer bg-white"
       onClick={() => onClick(villa)}
     >
-      <img
-        src="/assets/img/villa.jpg"
-        alt=""
-        className="w-full h-40 object-cover"
-      />
-      <div className="px-3 py-2 flex flex-col gap-3">
-        <h1 className="font-semibold text-lg">{villa.name}</h1>
-        <p className="font-medium">{villa.price}$</p>
+      {/* Image Carousel */}
+      <div className="h-40">
+        <Carousel name={villa.name} />
       </div>
-      {villa.reserved && (
-        <div className="absolute w-full h-full flex justify-center items-center inset-0 bg-gray-300 bg-opacity-50">
-          <h1 className="mb-10 text-white text-xl font-bold">E rezervuar</h1>
+
+      {/* Villa Info */}
+      <div className="px-4 py-3 flex flex-col gap-2">
+        <h1 className="font-semibold text-lg">{villa.name}</h1>
+        <p className="text-md font-medium text-gray-600">${villa.price}</p>
+      </div>
+
+      {/* Reserved Overlay */}
+      {reserved && (
+        <div className="absolute inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
+          <h1 className="relative bottom-10 text-white text-xl font-bold">
+            E rezervuar
+          </h1>
         </div>
       )}
     </div>
