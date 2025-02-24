@@ -6,14 +6,19 @@ export const chatWithAI = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { message, villa, date } = req.body;
+    const { userId, message } = req.body;
 
     if (!message) {
       res.status(400).json({ message: "Message is required" });
       return;
     }
 
-    const aiResponse = await sendMessageToChatGPT(message);
+    if (!userId) {
+      res.status(400).json({ error: "User ID is required" });
+      return;
+    }
+
+    const aiResponse = await sendMessageToChatGPT(userId, message);
     res.json(aiResponse);
   } catch (error) {
     res.status(500).json({ message: "Error processing AI request", error });

@@ -1,3 +1,4 @@
+import moment from "moment";
 import Reservation, { IReservation } from "../models/reservationModel";
 import { ReservationChat } from "../types/ReservationChat";
 
@@ -14,12 +15,14 @@ export const fetchReservations = async (
 };
 
 export const getReservationsOnDate = async (
-  date: string
+  today: string
 ): Promise<ReservationChat[]> => {
-  const startOfDay = new Date(date);
-  startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(date);
-  endOfDay.setHours(23, 59, 59, 999);
+  const startOfDay = moment(today, ["YYYY-MM-DD", "DD/MM/YYYY"], true).startOf(
+    "day"
+  );
+  const endOfDay = moment(today, ["YYYY-MM-DD", "DD/MM/YYYY"], true).endOf(
+    "day"
+  );
 
   const reservations = await Reservation.find({
     startDate: { $gte: startOfDay, $lte: endOfDay },
@@ -27,7 +30,11 @@ export const getReservationsOnDate = async (
 
   return reservations.map((res) => ({
     villa: res.villa,
-    date: date,
+    date: res.startDate.toLocaleDateString("en-GB", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    }),
     booked: true,
   }));
 };
